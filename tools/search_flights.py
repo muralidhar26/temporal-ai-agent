@@ -3,6 +3,7 @@ import json
 import http.client
 from dotenv import load_dotenv
 import urllib.parse
+import ssl
 
 
 def search_airport(query: str) -> list:
@@ -12,8 +13,11 @@ def search_airport(query: str) -> list:
     load_dotenv()
     api_key = os.getenv("RAPIDAPI_KEY", "YOUR_DEFAULT_KEY")
     api_host = os.getenv("RAPIDAPI_HOST", "sky-scrapper.p.rapidapi.com")
-
-    conn = http.client.HTTPSConnection(api_host)
+    # Create an SSL context with verification disabled
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+    conn = http.client.HTTPSConnection(api_host, context=ssl_context)
     headers = {
         "x-rapidapi-key": api_key,
         "x-rapidapi-host": api_host,
